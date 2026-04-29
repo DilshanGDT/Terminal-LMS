@@ -2,9 +2,9 @@
 #include <fstream>
 #include <vector>
 #include <string>
-using namespace std;
 
-// Import the standard namespace to simplify code.
+using namespace std; // Import the standard namespace to simplify code. 
+
 // Define a Book class to represent an individual book.
 class Book {
 private:
@@ -15,7 +15,7 @@ private:
     string category;
     int publicationYear;
     bool available;
-    string borrowerName; // stores borrower name when issued
+    string borrowerName; // new - stores borrower name when issued
 
 public:
     // Constructor to initialize book information.
@@ -26,9 +26,8 @@ public:
           available(isAvailable), borrowerName("") {
     }
 
-    // ---------------------------------------------------------------
     // TASK 01: Public member functions (getters) to access book info.
-    // ---------------------------------------------------------------
+
     string getID() const {
         return bookID;
     }
@@ -74,7 +73,7 @@ public:
         publicationYear = year;
     }
 
-    // Display all book information in a structured format
+    // Display all information about a book in a structured format
     void displayBookInfo() const {
         cout << "Book ID         : " << bookID << endl;
         cout << "Title           : " << title << endl;
@@ -101,9 +100,8 @@ public:
         books.push_back(book);
     }
 
-    // ---------------------------------------------------------------
     // TASK 02: Public member function to view all books in the library.
-    // ---------------------------------------------------------------
+
     void viewBooks() {
         if (books.empty()) {
             cout << "No books found in the library." << endl;
@@ -151,9 +149,8 @@ public:
         cout << "Book not found." << endl;
     }
 
-    // ---------------------------------------------------------------
     // TASK 03: Public member function to delete a book from the LMS.
-    // ---------------------------------------------------------------
+
     void deleteBook(const string& id) {
         for (auto it = books.begin(); it != books.end(); ++it) {
             if (it->getID() == id) {
@@ -248,9 +245,8 @@ int main() {
 
         switch (choice) {
 
-            // ---------------------------------------------------------------
             // TASK 04: Case 1 — Add a new book to the LMS.
-            // ---------------------------------------------------------------
+
             case 1: {
                 string id, bookTitle, authorName, bookCategory;
                 int year;
@@ -283,9 +279,8 @@ int main() {
                 break;
             }
 
-            // ---------------------------------------------------------------
             // TASK 05: Case 2 — View all books in the LMS.
-            // ---------------------------------------------------------------
+
             case 2: {
                 cout << "\n--- View All Books ---" << endl;
                 library.viewBooks();
