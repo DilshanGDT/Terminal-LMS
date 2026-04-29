@@ -1,0 +1,14 @@
+ID: 1000
+Title: Clean Code
+Author: James Cameron
+Category: IT
+Publication Year: 1900
+Available: Yes
+---------------------------
+ID: 1001
+Title: Animals
+Author: Johm Doe
+Category: Environmental Science
+Publication Year: 2000
+Available: Yes
+---------------------------
