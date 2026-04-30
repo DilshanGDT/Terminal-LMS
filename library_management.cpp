@@ -26,7 +26,7 @@ public:
           available(isAvailable), borrowerName("") {
     }
 
-    // TASK 01: Public member functions (getters) to access book info.
+    // TASK 01: Public member functions (getters) to access book information.
 
     string getID() const {
         return bookID;
