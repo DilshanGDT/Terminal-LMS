@@ -6,13 +6,14 @@
 #include <cctype>
 #include <ctime>
 #include <limits>
+#include <sstream>
 
 // Import the standard namespace to simplify code.
 using namespace std;  
 
 // HELPER FUNCTIONS
 
-// UPDATE 3: Capitalizes the first letter of each word in a string. (For Title, Author, Category and Borrower Name)
+// Capitalizes the first letter of each word in a string. (For Title, Author, Category and Borrower Name)
 string toTitleCase(const string& str) {
     string result = str;
     bool capitalizeNext = true;
@@ -31,7 +32,7 @@ string toTitleCase(const string& str) {
     return result;
 }
 
-// UPDATE 3 : Logical dates for the publication year. Year must be between 1000 and current year.
+// Logical dates for the publication year. Year must be between 1000 and current year.
 
 // Returns the current year using system time.
 int getCurrentYear() {
@@ -46,14 +47,13 @@ bool isValidYear(int year) {
     return (year >= 1000 && year <= currentYear);
 }
 
-
-// UPDATE 7: Clears cin fail state and ignores leftover input in the buffer.
+// Clears cin fail state and ignores leftover input in the buffer.
 void clearCinError() {
     cin.clear();
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 }
 
-// UPDATE 4 : Reads a non-empty string. Repeats until valid input is given.
+// Reads a non-empty string. Repeats until valid input is given.
 string readNonEmptyString(const string& prompt) {
     string value;
     while (true) {
@@ -66,7 +66,7 @@ string readNonEmptyString(const string& prompt) {
     }
 }
 
-// UPDATE 7: Reads a valid integer. Clears the buffer on bad (non-integer) input.
+// Reads a valid integer. Clears the buffer on bad (non-integer) input.
 int readInt(const string& prompt) {
     int value;
     while (true) {
@@ -90,6 +90,13 @@ int readValidYear(const string& prompt) {
         cout << "  [!] Invalid year. Please enter a year between 1000 and "
              << getCurrentYear() << "." << endl;
     }
+}
+
+// Trims leading and trailing whitespace from a string when parsing CSV fields.
+string trimWhitespace(const string& str) {
+    size_t start = str.find_first_not_of(" \t\r\n");
+    size_t end   = str.find_last_not_of(" \t\r\n");
+    return (start == string::npos) ? "" : str.substr(start, end - start + 1);
 }
 
 // -------------- Assignment Template Code --------------
@@ -184,7 +191,7 @@ class Library {
         // Private member variable to store a vector of Book objects.
         vector<Book> books;
 
-        // UPDATE 2: Checks whether a book ID already exists in the library.
+        // Checks whether a book ID already exists in the library.
         bool idExists(const string& id) const {
             for (const Book& book : books) {
                 if (book.getID() == id) return true;
@@ -194,7 +201,7 @@ class Library {
 
     public:
         // Public member function to add a book to the library.
-        // UPDATE 2: Adds a book only if the ID is unique. Returns false if duplicate.
+        // Adds a book only if the ID is unique. Returns false if duplicate.
         bool addBook(const Book& book) {
             if (idExists(book.getID())) {
                 return false;
@@ -207,7 +214,7 @@ class Library {
         
         // Public member function to view all books in the library.
         void viewBooks() {
-            // UPDATE 9: Handles the empty library case.
+            // Handles the empty library case.
             if (books.empty()) {
                 cout << "  No books are currently in the system." << endl;
                 return;
@@ -223,8 +230,6 @@ class Library {
         }
 
         // Public member function to edit a book.
-        // UPDATE 3: Title case applied. UPDATE 3 (dates): Year validated.
-        // UPDATE 8: Displays "Book Not Found" if ID does not exist.
         void editBook(const string& id) {
             for (Book& book : books) {
                 if (book.getID() == id) {
@@ -238,6 +243,7 @@ class Library {
                         book.setCategory(toTitleCase(raw));
                         cout << "  Category updated successfully." << endl;
                     } else if (editChoice == 2) {
+                        // Title case and Year validation.
                         int newYear = readValidYear(    "  Enter new Publication Year (ex: 1999)    : ");
                         book.setPublicationYear(newYear);
                         cout << "  Publication Year updated successfully." << endl;
@@ -252,7 +258,6 @@ class Library {
 
         // TASK 03: Public member function to delete a book from the LMS.
 
-        // UPDATE 8: Displays "Book Not Found" if ID does not exist.
         void deleteBook(const string& id) {
             for (auto it = books.begin(); it != books.end(); ++it) {
                 if (it->getID() == id) {
@@ -265,18 +270,17 @@ class Library {
         }
 
         // Public member function to issue a book.
-        // UPDATE 5a: Cannot issue a book that is already issued.
-        // UPDATE 3: Borrower name stored in title case.
-        // UPDATE 8: Displays "Book Not Found" if ID does not exist.
         void issueBook(const string& id) {
             for (Book& book : books) {
                 if (book.getID() == id) {
+                    // Cannot issue a book that is already issued.
                     if (!book.isAvailable()) {
                         cout << "  [!] This book is already issued and cannot be issued again." << endl;
                         return;
                     }
                     string borrower = readNonEmptyString("  Enter Borrower's Name                    : ");
                     book.setAvailable(false);
+                    // Borrower name stored in title case.
                     book.setBorrowerName(toTitleCase(borrower));
                     cout << "  Book issued to \"" << toTitleCase(borrower) << "\" successfully." << endl;
                     return;
@@ -286,11 +290,10 @@ class Library {
         }
 
         // Public member function to return a book.
-        // UPDATE 5b: Cannot return a book that is already available.
-        // UPDATE 8: Displays "Book Not Found" if ID does not exist.
         void returnBook(const string& id) {
             for (Book& book : books) {
                 if (book.getID() == id) {
+                    // Cannot return a book that is already available.
                     if (book.isAvailable()) {
                         cout << "  [!] This book is already Available and has not been issued." << endl;
                         return;
@@ -305,7 +308,7 @@ class Library {
         }
 
         // Public member function to search for books.
-        // UPDATE 10: Search book by ID, title, or author (case-insensitive partial match).
+        // TASK 1.6: Search book by ID, title, or author (case-insensitive partial match).
         void searchBook(const string& keyword) {
             string lowerKeyword = keyword;
             transform(lowerKeyword.begin(), lowerKeyword.end(), lowerKeyword.begin(), ::tolower);
@@ -360,6 +363,88 @@ class Library {
                 cerr << "  [!] Error: Unable to open file \"" << filename << "\" for writing." << endl;
             }
         }
+
+        // TASK 1.6: Import books from a CSV file into the library.
+
+        // Expected CSV format (with header row):
+        //   BookID,Title,Author,Category,PublicationYear,Available
+        //   1001,The Great Gatsby,F Scott Fitzgerald,Fiction,1925,1
+        void importFromCSV(const string& filename) {
+            ifstream file(filename);
+            if (!file.is_open()) {
+                cerr << "  [!] Error: Cannot open file \"" << filename << "\". Please check the filename and try again." << endl;
+                return;
+            }
+
+            string line;
+            int imported = 0;
+            int skipped  = 0;
+            bool firstLine = true;
+
+            while (getline(file, line)) {
+                // Skip the header row.
+                if (firstLine) {
+                    firstLine = false;
+                    continue;
+                }
+
+                // Skip blank lines.
+                if (line.empty()) continue;
+
+                // Parse the 6 comma-separated fields.
+                stringstream ss(line);
+                string fields[6];
+                int fieldCount = 0;
+                while (fieldCount < 6 && getline(ss, fields[fieldCount], ',')) {
+                    fields[fieldCount] = trimWhitespace(fields[fieldCount]);
+                    fieldCount++;
+                }
+
+                // Validate: must have exactly 6 fields and none of the key ones empty.
+                if (fieldCount < 6 || fields[0].empty() || fields[1].empty() || fields[2].empty()) {
+                    cout << "  [!] Skipping invalid row: \"" << line << "\"" << endl;
+                    skipped++;
+                    continue;
+                }
+
+                string id       = fields[0];
+                string title    = toTitleCase(fields[1]);
+                string author   = toTitleCase(fields[2]);
+                string category = toTitleCase(fields[3]);
+                int    year     = 0;
+                bool   avail    = true;
+
+                // Validate publication year.
+                try {
+                    year = stoi(fields[4]);
+                } catch (...) {
+                    cout << "  [!] Skipping row with invalid year: \"" << line << "\"" << endl;
+                    skipped++;
+                    continue;
+                }
+                if (!isValidYear(year)) {
+                    cout << "  [!] Skipping row with out-of-range year (" << year << "): \"" << fields[1] << "\"" << endl;
+                    skipped++;
+                    continue;
+                }
+
+                // Parse availability (1 = available, 0 = issued).
+                avail = (trimWhitespace(fields[5]) == "1");
+
+                Book newBook(id, title, author, category, year, avail);
+
+                // Skip if duplicate ID already exists.
+                if (!addBook(newBook)) {
+                    cout << "  [!] Skipping duplicate Book ID \"" << id << "\": \"" << title << "\"" << endl;
+                    skipped++;
+                } else {
+                    imported++;
+                }
+            }
+
+            file.close();
+            cout << "  Import complete. " << imported << " book(s) imported, " << skipped << " skipped." << endl;
+        }
 };
 
 
@@ -382,10 +467,11 @@ int main() {
         cout << "  6. Return Book"               << endl;
         cout << "  7. Save Book Details to File" << endl;
         cout << "  8. Search Book"               << endl;
-        cout << "  9. Quit"                      << endl;
+        cout << "  9. Import Books from CSV"     << endl;
+        cout << "  10. Quit"                     << endl;
         cout << "Enter your choice: ";
 
-        // UPDATE 7: Safe integer read — clears cin buffer on non-integer input.
+        // Safe integer read
         if (!(cin >> choice)) {
             clearCinError();
             choice = -1;
@@ -401,7 +487,7 @@ int main() {
                 // Add a new book to the LMS.
                 cout << "\n--- Add New Book ---" << endl;
 
-                // UPDATE 2 & 4: Non-empty + no spaces in ID.
+                // Non-empty + no spaces in ID.
                 string id;
                 while (true) {
                     id = readNonEmptyString("Enter Book ID (ex: 1000)                  : ");
@@ -412,12 +498,12 @@ int main() {
                     break;
                 }
 
-                // UPDATE 3 & 4: Title case + non-empty validation.
+                // Title case + non-empty validation.
                 string bookTitle    = toTitleCase(readNonEmptyString("Enter Title                               : "));
                 string authorName   = toTitleCase(readNonEmptyString("Enter Author Name                         : "));
                 string bookCategory = toTitleCase(readNonEmptyString("Enter Category                            : "));
 
-                // UPDATE 3 (Logical Dates): Validated year.
+                // Validated year.
                 int year = readValidYear(             "Enter Publication Year (ex: 1999)         : ");
 
                 // Availability — only 0 or 1 accepted.
@@ -431,7 +517,7 @@ int main() {
 
                 Book newBook(id, bookTitle, authorName, bookCategory, year, isAvailable);
 
-                // UPDATE 2: Duplicate ID check.
+                // Duplicate ID check.
                 if (!library.addBook(newBook)) {
                     cout << "  [!] Book ID is already available. Try a new ID." << endl;
                 } else {
@@ -489,8 +575,9 @@ int main() {
                 break;
             }
 
-            // UPDATE 10: Search book by ID, title, or author.
+            
             case 8: {
+                // Search book by ID, title, or author.
                 cout << "\n--- Search Book ---" << endl;
                 cout << "  Search by Book ID, Title, or Author." << endl;
                 string keyword = readNonEmptyString("Enter search keyword                      : ");
@@ -499,17 +586,27 @@ int main() {
             }
 
             case 9: {
+                // Import books from a CSV file.
+                cout << "\n--- Import Books from CSV ---" << endl;
+                cout << "  CSV format: BookID,Title,Author,Category,PublicationYear,Available" << endl;
+                cout << "  Available column: 1 = Available, 0 = Issued" << endl;
+                string csvFile = readNonEmptyString("Enter CSV filename (ex: books.csv)        : ");
+                library.importFromCSV(csvFile);
+                break;
+            }
+
+            case 10: {
                 // Exit the Library Management System.
                 cout << "\nExiting Library Management System. Goodbye!" << endl;
                 break;
             }
 
-            // UPDATE 6: Default case catches any input outside 1–9.
             default:
-                cout << "  [!] Invalid choice. Please enter a number between 1 and 9." << endl;
+                // Default case catches any input outside 1–10.
+                cout << "  [!] Invalid choice. Please enter a number between 1 and 10." << endl;
         }
 
-    } while (choice != 9);
+    } while (choice != 10);
 
     return 0;
 }

@@ -1,0 +1,37 @@
+ID               : 2001
+Title            : To Kill A Mockingbird
+Author           : Harper Lee
+Category         : Fiction
+Publication Year : 1960
+Available        : Yes
+-----------------------------
+ID               : 2002
+Title            : 1984
+Author           : George Orwell
+Category         : Dystopian
+Publication Year : 1949
+Available        : No
+Borrower         : 
+-----------------------------
+ID               : 2003
+Title            : A Brief History Of Time
+Author           : Stephen Hawking
+Category         : Science
+Publication Year : 1988
+Available        : Yes
+-----------------------------
+ID               : 2004
+Title            : The Alchemist
+Author           : Paulo Coelho
+Category         : Adventure
+Publication Year : 1988
+Available        : Yes
+-----------------------------
+ID               : 2005
+Title            : Pride And Prejudice
+Author           : Jane Austen
+Category         : Classic
+Publication Year : 1813
+Available        : No
+Borrower         : 
+-----------------------------
